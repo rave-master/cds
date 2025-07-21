@@ -4,40 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Travel Information Calendar</title>
-  <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    body{
-      background-size:cover;
-      background-position:center;
-      background-attachment:fixed;
-      color:#f0f0f0;
+    body {
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #f0f0f0;
     }
-    /* calendar grid */
-    #calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;}
-    .day{
-      border:1px solid #ccc;border-radius:.75rem;padding:10px;min-height:160px;
-      background:rgba(255,255,255,.95);color:#111;position:relative;font-size:.95rem;
-      transition:transform .2s;
+    #calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+    .day {
+      border: 1px solid #ccc; border-radius: .75rem; padding: 10px; min-height: 160px;
+      background: rgba(255,255,255,.95); color: #111; position: relative; font-size: .95rem;
+      transition: transform .2s;
     }
-    .day:hover{transform:scale(1.02);}
-    .date{font-weight:bold;margin-bottom:6px;}
-    .event{
-      margin-top:4px;padding:4px;border-left:4px solid #2563eb;border-radius:4px;
-      font-size:.875rem;cursor:pointer;word-break:break-word;
+    .day:hover { transform: scale(1.02); }
+    .date { font-weight: bold; margin-bottom: 6px; }
+    .event {
+      margin-top: 4px; padding: 4px; border-left: 4px solid #2563eb; border-radius: 4px;
+      font-size: .875rem; cursor: pointer; word-break: break-word;
     }
-    .weekday-header{font-weight:bold;text-align:center;color:#fff;margin-bottom:6px;}
+    .weekday-header { font-weight: bold; text-align: center; color: #fff; margin-bottom: 6px; }
     @media(max-width:768px){
-      .day{min-height:120px;padding:6px;font-size:.85rem;}
+      .day { min-height: 120px; padding: 6px; font-size: .85rem; }
     }
   </style>
 </head>
 <body class="min-h-screen p-4">
 
   <!-- Google Search bar -->
-  <div class="flex justify-center mb-6">
+  <div class="flex justify-center mb-3">
     <input id="google-search-input" type="text" placeholder="Search Google…" class="w-96 px-4 py-2 rounded-l-md border border-gray-300 text-black">
     <button onclick="searchGoogle()" class="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700">Search</button>
+  </div>
+
+  <!-- Name Filter -->
+  <div class="flex justify-center mb-6">
+    <input id="nameFilter" type="text" placeholder="🔍 Filter by name…" class="w-96 px-4 py-2 border border-gray-300 text-black rounded-md shadow" oninput="renderCalendar()">
   </div>
 
   <div class="max-w-7xl mx-auto">
@@ -70,21 +73,21 @@
 
   <!-- Main script -->
   <script type="module">
-    const apiUrl =
-      "https://script.google.com/macros/s/AKfycbzaYnbadkSXF4bGJNX-cb68yZIHu-zEWP41ewkik3SG1Ge15HDmrGjuKq2IcVgeMTE/exec";
+    const apiUrl = "https://script.google.com/macros/s/AKfycbzaYnbadkSXF4bGJNX-cb68yZIHu-zEWP41ewkik3SG1Ge15HDmrGjuKq2IcVgeMTE/exec";
 
     const calendar = document.getElementById("calendar");
     const calendarTitle = document.getElementById("calendarTitle");
+    const nameFilterInput = document.getElementById("nameFilter");
 
-    /* colour key by purpose (optional) */
     const purposeColors = {
-      Training:"#c084fc","Official Business":"#60a5fa",Monitoring:"#34d399",
-      "Field Work":"#facc15",Meeting:"#f87171",Workshop:"#fbbf24",
-      Seminar:"#fdba74",Inspection:"#fcd34d",Administrative:"#d1d5db"
+      Training: "#c084fc", "Official Business": "#60a5fa", Monitoring: "#34d399",
+      "Field Work": "#facc15", Meeting: "#f87171", Workshop: "#fbbf24",
+      Seminar: "#fdba74", Inspection: "#fcd34d", Administrative: "#d1d5db"
     };
 
     let currentYear = 2025;
-    let currentMonth = 6; // 0‑based (July)
+    let currentMonth = 6;
+    let cachedData = [];
 
     const renderCalendar = () => {
       calendar.innerHTML = "";
@@ -92,20 +95,17 @@
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
       const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
       const todayStr = new Date().toISOString().split("T")[0];
+      const monthName = new Date(currentYear, currentMonth).toLocaleString("default", { month: "long" });
+      calendarTitle.textContent = `📅 Travel Calendar – ${monthName} ${currentYear}`;
 
-      const monthName = new Date(currentYear, currentMonth).toLocaleString("default",{month:"long"});
-      calendarTitle.textContent = `📅 Travel Calendar – ${monthName} ${currentYear}`;
-
-      /* blank cells before first day */
       for (let i = 0; i < firstDayIndex; i++) {
         const blank = document.createElement("div");
         blank.className = "day opacity-0 pointer-events-none";
         calendar.appendChild(blank);
       }
 
-      /* actual day cells */
       for (let day = 1; day <= daysInMonth; day++) {
-        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
         const cell = document.createElement("div");
         cell.className = "day";
         if (dateStr === todayStr) cell.classList.add("bg-yellow-100");
@@ -117,38 +117,35 @@
         calendar.appendChild(cell);
       }
 
-      /* load Google Sheet data */
-      fetch(apiUrl)
-        .then(r => r.json())
-        .then(data => {
-          data.forEach(entry => {
-            const fromDate = new Date(entry["Date of Travel"]);
-            const toDate = entry["Date of Return"] ? new Date(entry["Date of Return"]) : fromDate;
-            if (isNaN(fromDate)) return;
+      const nameFilter = nameFilterInput.value.trim().toLowerCase();
 
-            const purpose = (entry["Purpose"] || "").trim();
-            const color = purposeColors[purpose] || "#e0f2fe";
+      cachedData.forEach(entry => {
+        const fromDate = new Date(entry["Date of Travel"]);
+        const toDate = entry["Date of Return"] ? new Date(entry["Date of Return"]) : fromDate;
+        if (isNaN(fromDate)) return;
 
-            for (let d = new Date(fromDate); d <= toDate; d.setDate(d.getDate()+1)) {
-              if (d.getFullYear() !== currentYear || d.getMonth() !== currentMonth) continue;
-              const dStr = d.toISOString().split("T")[0];
-              const cell = document.querySelector(`.day[data-date="${dStr}"]`);
-              if (cell){
-                const div = document.createElement("div");
-                div.className = "event";
-                div.style.backgroundColor = color;
-                div.textContent = entry["Name"];          // ▶ Name only
-                div.title = entry["Destination"] || "";   // optional tooltip
-                div.onclick = () => openModal(entry);     // ▶ show details
-                cell.appendChild(div);
-              }
-            }
-          });
-        })
-        .catch(err => console.error("Calendar data error:",err));
+        if (nameFilter && !entry["Name"].toLowerCase().includes(nameFilter)) return;
+
+        const purpose = (entry["Purpose"] || "").trim();
+        const color = purposeColors[purpose] || "#e0f2fe";
+
+        for (let d = new Date(fromDate); d <= toDate; d.setDate(d.getDate() + 1)) {
+          if (d.getFullYear() !== currentYear || d.getMonth() !== currentMonth) continue;
+          const dStr = d.toISOString().split("T")[0];
+          const cell = document.querySelector(`.day[data-date="${dStr}"]`);
+          if (cell) {
+            const div = document.createElement("div");
+            div.className = "event";
+            div.style.backgroundColor = color;
+            div.textContent = entry["Name"];
+            div.title = entry["Destination"] || "";
+            div.onclick = () => openModal(entry);
+            cell.appendChild(div);
+          }
+        }
+      });
     };
 
-    /* modal handlers */
     window.openModal = entry => {
       infoModal.classList.remove("hidden");
       infoModal.classList.add("flex");
@@ -160,32 +157,37 @@
         <p><strong>To:</strong> ${entry["Date of Return"] || entry["Date of Travel"]}</p>
         <p><strong>Status/Remarks:</strong> ${entry["Status / Remarks (if there was a change of plan)"] || "N/A"}</p>`;
     };
+
     window.closeModal = () => {
       infoModal.classList.add("hidden");
       infoModal.classList.remove("flex");
     };
 
-    /* month navigation */
     window.changeMonth = step => {
       currentMonth += step;
-      if (currentMonth < 0) {currentMonth = 11; currentYear--;}
-      else if (currentMonth > 11){currentMonth = 0; currentYear++;}
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      else if (currentMonth > 11) { currentMonth = 0; currentYear++; }
       renderCalendar();
     };
 
-    renderCalendar(); // initial load
+    fetch(apiUrl)
+      .then(r => r.json())
+      .then(data => {
+        cachedData = data;
+        renderCalendar();
+      })
+      .catch(err => console.error("Calendar data error:", err));
   </script>
 
-  <!-- Background image & Google search -->
+  <!-- Background and Search -->
   <script>
-    const backgroundImageURL="https://images.unsplash.com/photo-1506744038136-46273834b3fb";
-    document.addEventListener("DOMContentLoaded",()=>{
-      document.body.style.backgroundImage=
-        `linear-gradient(to right,rgba(0,0,0,.6),rgba(0,0,0,.3)),url('${backgroundImageURL}')`;
+    const backgroundImageURL = "https://images.unsplash.com/photo-1506744038136-46273834b3fb";
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.style.backgroundImage = `linear-gradient(to right,rgba(0,0,0,.6),rgba(0,0,0,.3)),url('${backgroundImageURL}')`;
     });
-    function searchGoogle(){
-      const q=document.getElementById("google-search-input").value;
-      if(q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`,"_blank");
+    function searchGoogle() {
+      const q = document.getElementById("google-search-input").value;
+      if (q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, "_blank");
     }
   </script>
 </body>
