@@ -83,28 +83,33 @@
 </head>
 <body class="min-h-screen py-8 px-4 sm:px-6">
   <div class="max-w-6xl mx-auto">
+    
     <!-- Header -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-      <div class="flex flex-col md:flex-row justify-between items-center">
-        <div class="flex items-center mb-4 md:mb-0">
-          <div class="bg-blue-600 p-3 rounded-lg mr-4">
-            <i class="fas fa-car text-white text-2xl"></i>
-          </div>
-          <div>
-            <h1 class="text-3xl font-bold text-gray-800">CDS Personnel Travel Dashboard</h1>
-            <p class="text-gray-500">Track and manage employee travel plans</p>
-          </div>
-        </div>
-        <div class="flex items-center space-x-2">
-          <span id="connectionStatus" class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            <i class="fas fa-circle text-xs mr-1"></i> Connected
-          </span>
-          <button id="refreshBtn" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2 rounded-lg transition-all">
-            <i class="fas fa-sync-alt"></i>
-          </button>
-        </div>
+<div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+  <div class="flex flex-col md:flex-row justify-between items-center">
+    <div class="flex items-center mb-4 md:mb-0">
+      <div class="bg-blue-600 p-3 rounded-lg mr-4">
+        <i class="fas fa-car text-white text-2xl"></i>
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">CDS Personnel Travel Dashboard</h1>
+        <p class="text-gray-500">Track and manage employee travel plans</p>
       </div>
     </div>
+    <div class="flex items-center space-x-2">
+      <span id="connectionStatus" class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        <i class="fas fa-circle text-xs mr-1"></i> Connected
+      </span>
+      <button id="refreshBtn" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2 rounded-lg transition-all">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+      <a href="calendar.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+        Calendar View
+      </a>
+    </div>
+  </div>
+</div>
+
     
     <!-- Main Content -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -126,10 +131,11 @@
                 <option value="Marvin R. Masalino">Marvin R. Masalino</option>
                 <option value="RONELO N QUINONG">Ronelo N. Quinong</option>
                 <option value="Rodirick S. Crescencio">Rodirick S. Crescencio</option>
-                <option value="Junery Colada">Junery Colada</option>
-                <option value="Nelia D. Rufon">Nelia D. Rufon</option>
                 <option value="Oliver D. Lucina">Oliver D. Lucina</option>
                 <option value="Randy Y. Abaya">Randy Y. Abaya</option>
+                <option value="Junery Colada">Junery Colada</option>
+                <option value="Alvin P. Piedraroja Jr.">Alvin P. Piedraroja</option>
+                <option value="Nelia D. Rufon">Nelia D. Rufon</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
                 <i class="fas fa-chevron-down"></i>
@@ -655,5 +661,4 @@
   };
 </script>
 
-  
 </html>
