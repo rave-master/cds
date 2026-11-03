@@ -163,6 +163,14 @@
         });
     };
 
+    const formatDate = (isoDate) => {
+      if (!isoDate) return "N/A";
+      const d = new Date(isoDate);
+      if (isNaN(d.getTime())) return "N/A";
+      const options = { month: "long", day: "numeric", year: "numeric" };
+      return d.toLocaleDateString("en-US", options);
+    };
+
     window.openModal = (entry) => {
       document.getElementById("infoModal").classList.remove("hidden");
       document.getElementById("infoModal").classList.add("flex");
@@ -170,8 +178,8 @@
         <p><strong>Name:</strong> ${entry.Name}</p>
         <p><strong>Destination:</strong> ${entry["Destination"] || ""}</p>
         <p><strong>Purpose:</strong> ${entry["Purpose"] || ""}</p>
-        <p><strong>From:</strong> ${entry["Date of Travel"]}</p>
-        <p><strong>To:</strong> ${entry["Date of Return"] || entry["Date of Travel"]}</p>
+        <p><strong>From:</strong> ${formatDate(entry["Date of Travel"])}</p>
+        <p><strong>To:</strong> ${formatDate(entry["Date of Return"] || entry["Date of Travel"])}</p>
         <p><strong>Status/Remarks:</strong> ${entry["Status / Remarks (if there was a change of plan)"] || "N/A"}</p>
       `;
     };

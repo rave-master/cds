@@ -13,7 +13,8 @@
     
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      background: url('101.jpg') no-repeat center center fixed;
+      background-size: cover;
     }
     
     .travel-card {
@@ -53,8 +54,8 @@
     
     .status-badge {
       position: absolute;
-      top: -10px;
-      right: -10px;
+      top: 10px;
+      right: 10px;
       animation: pulse 2s infinite;
     }
     
@@ -81,13 +82,20 @@
       color: white;
       font-weight: 500;
     }
+
+    .glass-container {
+      background: rgba(255, 255, 255, 0.75) !important;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
   </style>
 </head>
 <body class="min-h-screen py-8 px-4 sm:px-6">
   <div class="max-w-6xl mx-auto">
     
     <!-- Header -->
-<div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+<div class="bg-white rounded-xl shadow-lg p-6 mb-8 glass-container">
   <div class="flex flex-col md:flex-row justify-between items-center">
     <div class="flex items-center mb-4 md:mb-0">
       <div class="bg-blue-600 p-3 rounded-lg mr-4">
@@ -121,7 +129,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left Column - Filters -->
       <div class="lg:col-span-1">
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6 glass-container">
           <h2 class="text-xl font-semibold mb-4 flex items-center">
             <i class="fas fa-filter text-blue-600 mr-2"></i> Filters
           </h2>
@@ -132,16 +140,10 @@
             <div class="relative">
               <select id="personnel" class="w-full p-3 border border-gray-300 rounded-lg pl-4 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white">
                 <option value="">All Personnel</option>
-                <option value="Emelita R. Alfarero">Emelita R. Alfarero</option>
-                <option value="Jaynold O. Florida">Jaynold O. Florida</option>
-                <option value="Marvin R. Masalino">Marvin R. Masalino</option>
-                <option value="Ronelo N. Quinong">Ronelo N. Quinong</option>
-                <option value="Rodirick S. Crescencio">Rodirick S. Crescencio</option>
-                <option value="Oliver D. Lucina">Oliver D. Lucina</option>
-                <option value="Randy Y. Abaya">Randy Y. Abaya</option>
-                <option value="Junery M. Colada">Junery Colada</option>
-                <option value="Alvin P. Piedraroja Jr.">Alvin P. Piedraroja</option>
-                <option value="Nelia D. Rufon">Nelia D. Rufon</option>
+                <option value="DIVINA S. CRESCENCIO">DIVINA S. CRESCENCIO</option>
+                <option value="JOVELIE C. LIMSAN">JOVELIE C. LIMSAN</option>
+                <option value="FRITZIE J. SALAZAR">FRITZIE J. SALAZAR</option>
+                <option value="JUNERY M. COLADA">JUNERY M. COLADA</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
                 <i class="fas fa-chevron-down"></i>
@@ -180,7 +182,7 @@
         </div>
         
         <!-- Quick Actions -->
-        <div class="bg-gradient-to-r from-blue-500 to-blue-700 rounded-xl shadow-lg p-6 text-white">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-700 rounded-xl shadow-lg p-6 text-white glass-container">
           <h3 class="font-semibold mb-3">Need Help?</h3>
           <p class="text-sm text-blue-100 mb-4">Contact the travel department for assistance with travel plans and arrangements.</p>
          <a href="contact.html" class="inline-flex items-center bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
@@ -193,7 +195,7 @@
       
       <!-- Right Column - Results -->
       <div class="lg:col-span-2">
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6 relative">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6 relative glass-container">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold flex items-center">
               <i class="fas fa-calendar-alt text-blue-600 mr-2"></i> Travel Schedule
@@ -247,7 +249,7 @@
         </div>
         
         <!-- Summary Section -->
-        <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6">
+        <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6 glass-container">
           <h3 class="text-lg font-semibold mb-3 text-gray-700">Monthly Summary</h3>
           <div id="summaryStats" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
             <div class="bg-white rounded-lg p-3 shadow-sm">
@@ -414,14 +416,14 @@
 
     // Calculate trip duration in days
     function getTripDuration(startDate, endDate) {
-      if (!startDate || !endDate) return 0;
-      
+      if (!startDate) return 0;
+
       const start = new Date(startDate);
-      const end = new Date(endDate);
+      const end = endDate ? new Date(endDate) : start;
       const diffTime = Math.abs(end - start);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
-      return diffDays;
+
+      return diffDays + 1;
     }
 
     // Fetch data from API
@@ -657,7 +659,48 @@
     // Initialize the application
     init();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'962ad839b374ddcc',t:'MTc1MzEwMjQ0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'962ad839b374ddcc',t:'MTc1MzEwMjQ0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+    <!-- Version Modal -->
+    <div id="versionModal" class="fixed inset-0 hidden bg-black bg-opacity-60 items-center justify-center z-50 backdrop-blur-sm">
+      <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-black border border-gray-200">
+        <div class="flex items-center mb-4">
+          <div class="bg-blue-600 text-white rounded-lg p-3 mr-3">
+            <i class="fas fa-info-circle text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Version Update</h3>
+            <p class="text-sm text-gray-600">Planning Personnel Travel Plan Dashboard</p>
+          </div>
+        </div>
+        <div class="space-y-3 text-sm">
+          <p><strong>Version:</strong> 1.0.0</p>
+          <p><strong>Last Commit:</strong> dd7d3ff4</p>
+          <p><strong>Branch:</strong> main</p>
+          <p><strong>Updated:</strong> November 3, 2026</p>
+          <p><strong>Changes:</strong> Glass frost containers, duration fix, card tile visibility</p>
+        </div>
+        <button onclick="closeVersionModal()" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors mt-4">
+          Close
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white/80 backdrop-blur-md border-t border-gray-200 py-6 px-4 mt-12 glass-container">
+      <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+        <p class="font-medium">Copyright © DENR-XI PENRO DDN. Developed by DENR-XI PENRO DDN ICT.</p>
+        <div class="flex space-x-4">
+          <button onclick="openVersionModal()" class="text-blue-600 hover:text-blue-700 hover:underline">
+            Version Info
+          </button>
+          <a href="calendar.html" class="text-blue-600 hover:text-blue-700 hover:underline">
+            Calendar View
+          </a>
+        </div>
+      </div>
+    </footer>
+  </body>
 <script>
   document.addEventListener("contextmenu", e => e.preventDefault());
   document.onkeydown = function(e) {
@@ -665,6 +708,23 @@
       return false;
     }
   };
+
+  function openVersionModal() {
+    document.getElementById("versionModal").classList.remove("hidden");
+    document.getElementById("versionModal").classList.add("flex");
+  }
+
+  function closeVersionModal() {
+    document.getElementById("versionModal").classList.remove("flex");
+    document.getElementById("versionModal").classList.add("hidden");
+  }
+
+  // Close modal when clicking outside
+  document.getElementById("versionModal").addEventListener("click", function(e) {
+    if (e.target === this) {
+      closeVersionModal();
+    }
+  });
 </script>
 
 </html>
