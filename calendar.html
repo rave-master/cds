@@ -70,7 +70,7 @@
 
   <!-- Scripts -->
   <script type="module">
-    const apiUrl = "https://script.google.com/macros/s/AKfycbzaYnbadkSXF4bGJNX-cb68yZIHu-zEWP41ewkik3SG1Ge15HDmrGjuKq2IcVgeMTE/exec";
+    const apiUrl = "https://script.google.com/macros/s/AKfycbyCHOpcke_P0K7SZfEVxalMgLtLxlmPqAD47WIg3evkBXI3GOP1lJgWvSi_1Df-nA-_/exec";
     const calendar = document.getElementById("calendar");
     const calendarTitle = document.getElementById("calendarTitle");
 
@@ -86,8 +86,9 @@
       "Conduct": "#d1d5db"
     };
 
-    let currentYear = 2025;
-    let currentMonth = 6; // July (0-based)
+    const today = new Date();
+    let currentYear = today.getFullYear();
+    let currentMonth = today.getMonth(); // 0-based
 
     const renderCalendar = () => {
       calendar.innerHTML = "";
@@ -116,6 +117,7 @@
       fetch(apiUrl)
         .then(res => res.json())
         .then(data => {
+          const uniqueEvents = new Map();
           data.forEach(entry => {
             const fromDate = new Date(entry["Date of Travel"]);
             const toDate = entry["Date of Return"] ? new Date(entry["Date of Return"]) : fromDate;
@@ -123,19 +125,36 @@
 
             const purpose = (entry["Purpose"] || "").trim();
             const color = purposeColors[purpose] || "#e0f2fe";
+            const name = (entry["Name"] || "").trim().replace(/\s+/g, " ");
+            const destination = (entry["Destination"] || "").trim().replace(/\s+/g, " ");
+            // Normalize for dedup key: remove all whitespace and non-word chars, lowercase
+            const normName = name.replace(/[^a-z0-9]/gi, "").toLowerCase();
+            const normDest = destination.replace(/[^a-z0-9]/gi, "").toLowerCase();
 
             for (let d = new Date(fromDate); d <= toDate; d.setDate(d.getDate() + 1)) {
               if (d.getFullYear() !== currentYear || d.getMonth() !== currentMonth) continue;
               const dStr = d.toISOString().split("T")[0];
-              const cell = document.querySelector(`.day[data-date="${dStr}"]`);
-              if (cell) {
-                const div = document.createElement("div");
-                div.className = "event";
-                div.style.backgroundColor = color;
-                div.innerHTML = `<strong>${entry["Name"]}</strong><br>${entry["Destination"] || ""}`;
-                div.onclick = () => openModal(entry);
-                cell.appendChild(div);
+              const key = `${dStr}|${normName}|${normDest}`;
+              if (!uniqueEvents.has(key)) {
+                uniqueEvents.set(key, { entry, color, name, destination, dStr });
               }
+            }
+          });
+
+          uniqueEvents.forEach(({ entry, color, name, destination, dStr }) => {
+            const cell = document.querySelector(`.day[data-date="${dStr}"]`);
+            if (cell) {
+              // DOM-level safety net: skip if identical event already in this cell
+              const alreadyExists = Array.from(cell.querySelectorAll(".event")).some(
+                div => div.innerHTML === `<strong>${name}</strong><br>${destination}`
+              );
+              if (alreadyExists) return;
+              const div = document.createElement("div");
+              div.className = "event";
+              div.style.backgroundColor = color;
+              div.innerHTML = `<strong>${name}</strong><br>${destination}`;
+              div.onclick = () => openModal(entry);
+              cell.appendChild(div);
             }
           });
         })
